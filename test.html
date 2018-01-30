@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="layout/styles/bootstrap/bootstrap.min.css">
+    <title>Title</title>
+</head>
+<body>
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#home">Home</a>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" data-toggle="tab" href="#one">One</a>
+            <a class="dropdown-item" data-toggle="tab" href="#two">Two</a>
+            <a class="dropdown-item" data-toggle="tab" href="#three">Three</a>
+        </div>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#contact">Contact</a>
+    </li>
+</ul>
+
+<div class="container-fluid">
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane fade in active" id="home">
+            <div class="alert alert-info">Home</div>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="one">
+            <div class="alert alert-info">One</div>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="two">
+            <div class="alert alert-info">Two</div>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="three">
+            <div class="alert alert-info">Three</div>
+        </div>
+        <div role="tabpanel" class="tab-pane fade" id="contact">
+            <div class="alert alert-info">Contact</div>
+        </div>
+    </div>
+</div>
+<input type="text" id="jh">
+<div id="s"></div>
+<select class="form-control" name="bank" id="kl">
+    <option selected>Select Bank</option>
+    <option class="sd">Access</option>
+    <option  class="sd">First</option>
+    <option  class="sd">stanbic</option>
+    <option  class="sd">FCMB</option>
+    <option  class="sd">GTB</option>
+</select>
+<script src="jquery/jquery.min.js"></script>
+<script src="layout/scripts/bootstrap/bootstrap.min.js"></script>
+<script>
+// $(function () {
+//     $('#myTab a').click( function (e) {
+//         e.preventDefault();
+//         $(this).tab('show');
+//     })
+// });
+
+
+$(function () {
+    var t = ''; var c = [];
+    $('.sd').each(function () {
+        t = $(this).text();
+        c.push(t);
+    });
+
+    console.log(c);
+    /*$('#jh').autocomplete({
+     source: c
+     });*/
+   $('#jh').on('keyup', function () {
+//           for ( var i = 0; i <= c.length; i++) {
+        var y = $(this).val();
+        y = y.toUpperCase();
+        var searchstring = y.split(/\W/);
+
+//           var hoj = c[i];
+
+        for ( var i = 0, len = searchstring.length; i < len; i++) {
+            var jk= searchstring[i].toUpperCase();
+                //var jk= searchstring;
+            if( jk !== ""){
+                var navdivs = document.getElementsByClassName('sd') ;
+                for (var j =0, divslen = navdivs.length; j < divslen; j++){
+                    if(navdivs[j].textContent.toUpperCase().indexOf(jk) > -1){
+                        navdivs[j].style.display = "block";
+                        $('#s').text.append(navdivs[j]);
+                    }
+                }
+            }
+                //$('#l').text(c[i]);
+        }
+    });
+});
+</script>
+</body>
+</html>
