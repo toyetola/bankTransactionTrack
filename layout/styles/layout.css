@@ -378,6 +378,13 @@ label{ color: #4a575a
 	font-size: 18px;
 }
 
+#login-form-link{
+	 color: greenyellow;
+ }
+
+#register-form-link{
+	color: greenyellow;
+}
 
 
 #c{

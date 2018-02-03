@@ -17,3 +17,12 @@ if (isset($_POST['g']) && isset($_POST['f'])){
         echo $res['email'];
     }
 }
+
+if (isset($_POST['bvn']) && isset($_POST['c'])){
+    $bvn = $_POST['bvn'];
+    $c = $_POST['c'];
+    $fr = $cn->query("SELECT bvn FROM $c where bvn='$bvn'");
+    while($res=$fr->fetch_assoc()){
+        echo $res['bvn'];
+    }
+}

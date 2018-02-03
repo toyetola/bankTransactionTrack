@@ -18,11 +18,13 @@ if(isset($_POST['log'])){
     $amt = $_POST['amount'];
     $date = $_POST['date'];
     $bank = $_POST['bank'];
+    $dat = new DateTime('now', new DateTimeZone('Africa/Lagos'));
+    $dat = $dat->format('d/m/Y h:m:s');
     $r = $cn->query("SELECT * FROM transaction where transactionNumber = '$trc' AND email='$id'");
     if ($r->num_rows ==  0 ) {
         $fr = $cn->query("INSERT INTO transaction(`transactionNumber`, `bank`,`transactionType`, `amount`, `date`,`acct_no`, `email`) VALUES ('$trc','$bank','$typ','$amt','$date','$acct','$id')");
         if ($fr){
-            echo "<script>alert('Successfully registered. Please Login')</script>";
+            echo "<script>alert('Transaction Successfully logged')</script>";
             //echo "<script>window.location.href='index.php';</script>";
         }
     }else{
@@ -34,7 +36,9 @@ if(isset($_POST['log'])){
 if (isset($_POST['send'])){
   $rep = $_POST['rep'];
   $tck = $_POST['ticket'];
-   $qr = $cn->query("INSERT INTO replies(ticketNo_id, reply) VALUES('$tck', '$rep')");
+    $dat = new DateTime('now', new DateTimeZone('Africa/Lagos'));
+    $dat = $dat->format('d/m/Y h:m:s');
+   $qr = $cn->query("INSERT INTO replies(ticketNo_id, reply, replyTime) VALUES('$tck', '$rep', '$dat')");
    if($qr){
        echo "<div class='alert alert-success'><i class='fa fa-close pull-right close'></i>Message sent</div>";
    }
@@ -43,7 +47,7 @@ if (isset($_POST['send'])){
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Devenna</title>
+    <title>E-track</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link href="../layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
@@ -61,9 +65,9 @@ if (isset($_POST['send'])){
         <nav id="mainav" class="fl_left">
             <ul class="clear">
                 <li class="active"><a href="index.html">Home</a></li>
-                <li><a class="drop" href="#">Pages</a>
+                <li><a class="drop" href="#">Actions</a>
                     <ul>
-                        <li><a href="#"></a></li>
+                        <li><a href="logout.php">Logout</a></li>
                         <li><a href="#"></a></li>
 
                     </ul>
@@ -92,21 +96,22 @@ if (isset($_POST['send'])){
     <header id="header" class="hoc clear">
         <!-- ################################################################################################ -->
         <div id="logo" class="fl_left">
-            <h1><a href="index.html">E-TransactionTrack</a></h1>
+            <h1><a href="#">E-TransactionTrack</a></h1>
         </div>
         <div id="quickinfo" class="fl_right">
             <ul class="nospace inline">
                 <li><strong>Mobile no:</strong><br>
                     +234 123 456 7890</li>
-                <li><strong>Phone no:</strong><br>
-                    +234 123 456 7890</li>
+                <li><strong>IN ACTIVE SESSSION:</strong><br>
+                    Admin</li>
+                <li><a href="logout.php" class="btn-danger btn-sm">Logout</a></li>
             </ul>
         </div>
         <!-- ################################################################################################ -->
     </header>
     <div class='row'>
-        <div class="col-md-6">
-            <p id="em">Welcome  <?= $_SESSION['username']?></p>
+        <div class="col-md-6 offset-1">
+            <p id="em">Welcome  <b><?= $_SESSION['username']?></b></p>
         </div>
         <div class="col-md-6">
             <p id="oth"></p>
@@ -199,14 +204,14 @@ if (isset($_POST['send'])){
             <input type="text" class="form-control" readonly id="nam" name="id" required>
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" placeholder="Trasaction Slip ID" id="nm" name="trc" required>
+            <input type="text" class="form-control" placeholder="Transaction Slip ID" id="nm" name="trc" required>
         </div>
 
         <div class="form-group">
             <select name="typ" id="typ" class="form-control">
-                <option value="" selected>Select Transaction Type</option>
-                <option value="">Deposit</option>
-                <option value="">Withdrawal</option>
+                <option selected>Select Transaction Type</option>
+                <option>Deposit</option>
+                <option>Withdrawal</option>
             </select>
         </div>
         <div class="form-group">
@@ -225,46 +230,50 @@ if (isset($_POST['send'])){
     Messages<?php
     $r = $cn->query("SELECT * FROM messages");
     while($res = $r->fetch_assoc()){
-        echo "<div class='card-header'><input type=text id='ticket' name='ticket' value='".$res['ticket_no']."'></div>";
+        echo "<div class='card-header bg-secondary'><input type=text id='ticket' name='ticket' value='".$res['ticket_no']."'></div>";
         echo "<div class='text-info'>Message</div>";
-       echo "<div class='card-body'>".$res['message']."</div>";
+       echo "<div class='card-body'>".$res['message']."<span class='pull-right'>".$res['messageTime']."</span></div>";
         echo "<div class='text-info'>Replies</div>";
        $c = $res['ticket_no'];
-        $v = $cn->query("SELECT * FROM replies WHERE ticketNo_id= $c");
+        $v = $cn->query("SELECT * FROM replies WHERE ticketNo_id= '$c'");
         while ($re = $v->fetch_assoc()){
             echo "<div class='dropdown-divider'></div><div class='card-body'>".$re['reply']."</div>";
         }
-        echo "<button class='btn-primary btn-sm' id='makereply'>Reply this message</button>";
+        echo "<button class='btn-primary btn-sm makereply' id='makereply'>Reply this message</button>";
         echo "<form method='post' action='aminhome.php'>";
-       echo "<div class='form-group'>
-       <textarea id='rep' name='rep' class='form-control'>
-       </textarea>
-       </div>";
-       echo "<input type='submit' class='btn-success btn-sm' name='send' value='Send Message' id='send'></form>";
+        echo "<input type=hidden id='ticket' name='ticket' value='".$res['ticket_no']."'>";
+       echo "<div class='form-group'>";
+        echo "<textarea id='rep' name='rep' class='form-control rep'>
+       </textarea>";
+       echo "</div>";
+       echo "<input type='submit' class='btn-success btn-sm send' name='send' value='Send Message' id='send'></form>";
 
     }
     ?>
 </div>
 </div>
+    <div class="container" style="height: 10vh">
+
+    </div>
 </div>
 <script src="../jquery/jquery.min.js"></script>
 <script src="../jquery/jquery.dataTables.min.js"></script>
 <script src="../layout/scripts/bootstrap/bootstrap.min.js"></script>
 <script>
 $(document).ready(function() {
-    $('#rep').hide();
-    $('#send').attr('hidden', true);
-    $('#makereply').on('click', function (){
+    $('.rep').hide();
+    $('.send').attr('hidden', true);
+    $('.makereply').on('click', function (){
         var fg = $(this).text();
         if( fg == 'Reply this message'){
-            $('#rep').show();
+            $('.rep').show();
             $(this).text('Cancel');
             $(this).addClass('btn-danger');
-            $('#send').attr('hidden', false);}
+            $('.send').attr('hidden', false);}
         else{
-            $('#rep').hide();
-            $('#send').attr('hidden', true);
-            $('#makereply').text('Reply this message');
+            $('.rep').hide();
+            $('.send').attr('hidden', true);
+            $('.makereply').text('Reply this message');
             $(this).removeClass('btn-danger');
         }
     });

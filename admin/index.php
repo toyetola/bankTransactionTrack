@@ -84,14 +84,14 @@ if (isset($_POST['register'])){
   <header id="header" class="hoc clear">
     <!-- ################################################################################################ -->
     <div id="logo" class="fl_left">
-      <h1><a href="index.html">E-TransactionTrack</a></h1>
+      <h1><a href="index.php">E-TransactionTrack</a></h1>
     </div>
     <div id="quickinfo" class="fl_right">
       <ul class="nospace inline">
         <li><strong>Mobile no:</strong><br>
-+00 (123) 456 7890</li>
-        <li><strong>Phone no:</strong><br>
-+00 (123) 456 7890</li>
++234 123 456 7890</li>
+        <li><strong>Bank User</strong><br>
+Admin</li>
       </ul>
     </div>
     <!-- ################################################################################################ -->
@@ -101,8 +101,8 @@ if (isset($_POST['register'])){
 <div class="container">
     <div class="row">
         <div class="col-sm-10 offset-sm-1 col-md-6 offset-md-3" id="lop">
-            <div class="card panel-login">
-                <div class="card-header">
+            <div class="card panel-login bg-dark">
+                <div class="card-header ">
                     <div class="row">
                         <div class="col-md-6 col-sm-6">
                             <a href="#" class="active" id="login-form-link">Login as an exiting user</a>
@@ -128,7 +128,7 @@ if (isset($_POST['register'])){
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                     <label>Username</label>
+                                     <label style="color: white">Username</label>
 
                                     <input type="text" value="" class="form-control input-lg" placeholder="Username" name="user">
 
@@ -136,14 +136,14 @@ if (isset($_POST['register'])){
                                 <div class="form-group">
 
                                     <a class="pull-right" href="#">(Lost Password?)</a>
-                                    <label>Password</label>
+                                    <label style="color: white">Password</label>
 
                                     <input type="password" value="" class="form-control input-lg" placeholder="Password" name="pword">
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
 															<span class="remember-box checkbox">
-																<label for="rememberme">
+																<label for="rememberme" style="color: white">
 																	<input type="checkbox" id="rememberme" name="rememberme">Remember Me
 																</label>
 															</span>

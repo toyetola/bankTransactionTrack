@@ -4,6 +4,42 @@ if(!isset($_SESSION['email'])){
     header('location:index.php');
 }
 require 'conn.php';
+if(isset($_POST['logit'])){
+    $acct = $_POST['acct'];
+    $trc = $_POST['slip'];
+    $id= $_SESSION['email'];
+    $typ = $_POST['typ'];
+    $amt = $_POST['amt'];
+//    $date = $_POST['date'];
+    $bank = $_POST['bank'];
+    $dat = new DateTime('now', new DateTimeZone('Africa/Lagos'));
+    $dat = $dat->format('d/m/Y');
+    $r = $cn->query("SELECT * FROM transaction where transactionNumber = '$trc' AND email='$id'");
+    if ($r->num_rows ==  0 ) {
+        $fr = $cn->query("INSERT INTO transaction(`transactionNumber`, `bank`,`transactionType`, `amount`, `date`,`acct_no`, `email`) VALUES ('$trc','$bank','$typ','$amt','$dat','$acct','$id')");
+        if ($fr){
+            echo "<script>alert('Transaction Successfully logged')</script>";
+            //echo "<script>window.location.href='index.php';</script>";
+        }
+    }else{
+        echo "<script>alert('STOP! Your transaction has been logged already *Smiles*');</script>";
+
+    }
+}
+
+if (isset($_POST['send']) && !empty($_POST['send'])){
+    $p= $_SESSION['email'];
+    $rep = $_POST['rep'];
+    $tck = $_POST['ticket'];
+    $dat = new DateTime('now', new DateTimeZone('Africa/Lagos'));
+    $dat = $dat->format('d/m/Y h:m:s');
+    $qr = $cn->query("INSERT INTO messages (email, ticket_no, message, messageTime) VALUES('$p', '$tck', '$rep', '$dat')");
+    if($qr){
+        echo "<div class='alert alert-success' style='text-align: center'><i class='fa fa-close pull-right close'></i>Message sent</div>";
+    }else{
+        echo "<div class='alert alert-danger' style='text-align: center'><i class='fa fa-close pull-right close'></i>Message not sent</div>";
+    }
+}
 /**
  * Created by PhpStorm.
  * User: oyetola
@@ -30,12 +66,11 @@ require 'conn.php';
         <!-- ################################################################################################ -->
         <nav id="mainav" class="fl_left">
             <ul class="clear">
-                <li class="active"><a href="index.html">Home</a></li>
-                <li><a class="drop" href="#">Pages</a>
+                <li class="active"><a href="user.php.">Home</a></li>
+                <li><a class="drop" href="#">Actions</a>
                     <ul>
-                        <li><a href="#">Gallery</a></li>
+                        <li><a href="logout.php">Logout</a></li>
                         <li><a href="#">Settings</a></li>
-
                     </ul>
                 </li>
             </ul>
@@ -70,6 +105,7 @@ require 'conn.php';
                     +234 123 456 7890</li>
                 <li><strong>Phone no:</strong><br>
                     +234 123 456 7890</li>
+                <li><a href="logout.php" class="btn-danger btn-sm">Logout</a></li>
             </ul>
         </div>
         <!-- ################################################################################################ -->
@@ -86,7 +122,7 @@ require 'conn.php';
 
 <div class="col-md-8 offset-md-2">
 <!--    <div class="card ">-->
-        <div class="card-header">
+        <div class="card-header bg-dark">
 
         </div>
 <!--        <div class="card-body">-->
@@ -128,10 +164,12 @@ require 'conn.php';
                             <?php
                             $z = $_SESSION['email'];
                             $res = $cn->query("SELECT * FROM transaction WHERE email = '$z'");
+                            $i =0;
                             if($res->num_rows > 0){
                                 while ($dat = $res->fetch_assoc()) {
+                                    $i = $i+1;
                                     echo "<tr>";
-                                    echo "<td>".$dat['id']."</td>";
+                                    echo "<td>".$i."</td>";
                                     echo "<td>".$dat['transactionNumber']."</td>";
                                     echo "<td>".$dat['transactionType']."</td>";
                                     echo "<td>".$dat['amount']."</td>";
@@ -147,56 +185,78 @@ require 'conn.php';
                             </tbody>
                         </table>
 <!--                    </div>-->
-                </div>
+        </div>
 
         <div role="tabpanel" class="tab-pane fade" id="lg">
             <div class="col-md-6" style="text-align: center">
-                <p>Enter a new transaction</p>
-            <form>
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Transaction ID">
-                        </div>
+                <h3>Enter a new transaction</h3>
+            <form method="post" action="user.php">
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Transaction ID">
+                    <select class="form-control" id="kl" name="bank">
+                        <option selected>Select Bank Involved</option>
+                        <?php $r = $cn->query('SELECT * FROM banks WHERE status=1');
+                        while ($res = $r->fetch_assoc()) {
+                            echo "<option>".$res['banks']."</option>";
+                        }
+                        ?>
+                    </select>
                 </div>
                         <div class="form-group">
-                            <input type="text" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <input type="date" class="form-control">
+                            <input type="text" class="form-control" placeholder="Transaction Slip ID" name="slip">
                         </div>
                 <div class="form-group">
-                    <input type="submit" class="form-control">
+                    <input type="text" class="form-control" placeholder="Acct Number Involved" name="acct">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Amount" name="amt">
+                </div>
+                <div class="form-group">
+                    <select name="typ" id="typ" class="form-control">
+                        <option selected>Select Transaction Type</option>
+                        <option>Deposit</option>
+                        <option>Withdrawal</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Log this Transaction" class="form-control btn-success" name="logit">
                 </div>
                     </form>
             </div>
-                </div>
+        </div>
 
-        <div role="tabpanel" class="tab-pane fade" id="messge">
+        <div role="tabpanel" class="tab-pane" id="messge">
             Messages<?php
-            $r = $cn->query("SELECT * FROM messages WHERE email=".$_SESSION['email']);
-            while($res = $r->fetch_assoc()){
-                echo "<div class='card-header'><input type=text id='ticket' name='ticket' value='".$res['ticket_no']."'></div>";
+            $p= $_SESSION['email'];
+            echo "<div class='card-header'><input type=text id='ticket' name='ticket' value='" . $res['ticket_no'] . "'></div>";
+
+            echo "<div class='card-body'>";
+            $r = $cn->query("SELECT * FROM messages WHERE email='$p' ORDER BY messageTime ");
+            while ($res = $r->fetch_assoc()) {
                 echo "<div class='text-info'>Message</div>";
-                echo "<div class='card-body'>".$res['message']."</div>";
+                    echo "<div>".$res['message']."<i class='pull-right'>".$res['messageTime']."</i></div>";
                 echo "<div class='text-info'>Replies</div>";
                 $c = $res['ticket_no'];
-                $v = $cn->query("SELECT * FROM replies WHERE ticketNo_id= $c");
-                while ($re = $v->fetch_assoc()){
-                    echo "<div class='dropdown-divider'></div><div class='card-body'>".$re['reply']."</div>";
+                $v = $cn->query("SELECT * FROM replies WHERE ticketNo_id= '$c' ORDER BY replyTime");
+                while ($re = $v->fetch_assoc()) {
+                    echo "<div class='dropdown-divider'></div><div>" . $re['reply']."<i class='pull-right'>".$re['replyTime']."</i></div>";
                 }
-                echo "<button class='btn-primary btn-sm' id='makereply'>Reply this message</button>";
-                echo "<form method='post' action='aminhome.php'>";
-                echo "<div class='form-group'>
+                    }
+
+
+//                echo "<button class='btn-primary btn-sm' id='makereply'>Reply this message</button>";
+                    echo "<form method='post' action='user.php'>";
+                    echo "<div class='card-header'><input type=hidden id='ticket' name='ticket' value='" . $res['ticket_no'] . "'></div>";
+                    echo "<div class='form-group'>
        <textarea id='rep' name='rep' class='form-control'>
        </textarea>
        </div>";
-                echo "<input type='submit' class='btn-success btn-sm' name='send' value='Send Message' id='send'></form>";
-
-            }?>
+                    echo "<input type='submit' class='btn-success btn-sm' name='send' value='Reply this Message' id='send'></form>";
+echo "</div>";
+                ?>
         </div>
 
-                <div role="tabpanel" class="tab-pane fade" id="messges">
+                <div role="tabpanel" class="tab-pane" id="messges">
                     <div id="comment">
                         <h2>Type Your Message</h2>
                         <form action="message.php" method="post">
@@ -214,11 +274,11 @@ require 'conn.php';
 <!--                            </div>-->
                             <div class="col-md-6">
                                 <label for="comment">Your Complaint</label><br>
-                                <textarea name="comment" id="comment" class="form-control"></textarea>
+                                <textarea name="comment" id="comment" class="form-control" cols="5" rows="4"></textarea>
                             </div>
                             <br>
-                            <div class="dsp">
-                                <input type="reset" class="btn-primary btn-sm" name="reset" value="Clear Message">
+                            <div class="row">
+                                <button type="button" class="btn-dark btn-sm" id="reset">Clear Message</button>
                                 <input type="submit" class="btn-success btn-sm" name="sub" value="Send Message">
                             </div>
                         </form>
@@ -230,11 +290,13 @@ require 'conn.php';
 <!--        </div>-->
 <!--</div>-->
     </div>
+    <div class="row" style="height: 10vh"></div>
 </div>
 
-<!--<script src="jquery/jquery.min.js"></script>-->
-<script src="layout/scripts/bootstrap/bootstrap.js"></script>
+<script src="jquery/jquery.js"></script>
 <script src="jquery/jquery.dataTables.min.js"></script>
+<script src="layout/scripts/bootstrap/bootstrap.js"></script>
+
 
 <script>
     var emal = $('#em').text();
@@ -248,6 +310,12 @@ require 'conn.php';
         $('#oth').html(data);
     }}
     });
+    $('#reset').click(function () {
+        $('#comment').value = "";
+    });
+    $('.fa-close').click(function () {
+        $(this).closest('div').remove();
+    })
 </script>
 <script>
 

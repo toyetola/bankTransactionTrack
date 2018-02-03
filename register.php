@@ -7,12 +7,14 @@ if (isset($_POST['kl'])){
     $email = $_POST['email'];
     $pword = $_POST['pword'];
     $cpword = $_POST['cpword'];
-    if ($cpword == $pword && $bank!= 'Select Bank') {
+    if ($cpword == $pword && $bank !== 'Select Bank') {
         $fr = $cn->query("INSERT INTO users(`bank`, `acct_no`, `name`, `bvn`,`email`, `password`) VALUES ('$bank','$acct','$name','$bvn','$email','$pword')");
         if ($fr){
             echo "<script>alert('Successfully registered. Please Login')</script>";
             echo "<script>window.location.href='index.php';</script>";
         }
+    }else{
+        echo "<script>alert('Password does not match. Check if you selected a bank );</script>";
     }
 }
 
@@ -22,12 +24,12 @@ if (isset($_POST['kl'])){
 
 <html>
 <head>
-    <title>Devenna</title>
+    <title>E-Track</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link href="layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
-    <link rel="stylesheet" href="layout/styles/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="layout/styles/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="layout/styles/bootstrap/bootstrap.css">
+<!--    <link rel="stylesheet" href="layout/styles/bootstrap/css/bootstrap.min.css">-->
 </head>
 <body id="top">
 <!-- ################################################################################################ -->
@@ -38,14 +40,11 @@ if (isset($_POST['kl'])){
         <!-- ################################################################################################ -->
         <nav id="mainav" class="fl_left">
             <ul class="clear">
-                <li class="active"><a href="index.html">Home</a></li>
+                <li class="active"><a href="index.php">Home</a></li>
                 <li><a class="drop" href="#">Pages</a>
                     <ul>
-                        <li><a href="pages/gallery.html">Gallery</a></li>
-                        <li><a href="pages/full-width.html">Full Width</a></li>
-                        <li><a href="pages/sidebar-left.html">Sidebar Left</a></li>
-                        <li><a href="pages/sidebar-right.html">Sidebar Right</a></li>
-                        <li><a href="pages/basic-grid.html">Basic Grid</a></li>
+                        <li><a href="#">News</a></li>
+                        <li><a href="#">Settings</a></li>
                     </ul>
                 </li>
             </ul>
@@ -72,7 +71,7 @@ if (isset($_POST['kl'])){
     <header id="header" class="hoc clear">
         <!-- ################################################################################################ -->
         <div id="logo" class="fl_left">
-            <h1><a href="index.html">E-TransactionTrack</a></h1>
+            <h1><a href="index.php">E-TransactionTrack</a></h1>
         </div>
         <div id="quickinfo" class="fl_right">
             <ul class="nospace inline">
@@ -94,7 +93,7 @@ if (isset($_POST['kl'])){
     <div class="card-body">
         <form method="post" action="register.php">
     <div class="form-group">
-        <select class="form-control" id="kl" name="bank">
+        <select class="form-control" id="kl" name="bank" required>
             <option selected>Select Bank</option>
             <?php $r = $cn->query('SELECT * FROM banks WHERE status = 1');
             while ($res = $r->fetch_assoc()) {
@@ -109,10 +108,10 @@ if (isset($_POST['kl'])){
         <input type="text" placeholder="Account Number" class="form-control" id="jk" name="acct" size="10">
     </div>
     <div class="form-group">
-        <input type="text" placeholder="" class="form-control" readonly id="accNo" name="name">
+        <input type="text" placeholder="" class="form-control" readonly id="accNo" name="name" required>
     </div>
             <div class="form-group">
-                <input type="text" placeholder="BVN" class="form-control"  name="bvn">
+                <input type="text" placeholder="BVN" class="form-control"  name="bvn" id="bvn">
             </div>
             <div class="form-group">
                 <input type="text" placeholder="Email" class="form-control" name="email">
@@ -123,9 +122,10 @@ if (isset($_POST['kl'])){
     <div class="form-group">
         <input type="text" placeholder="Confirm Password" class="form-control" name="cpword">
     </div>
-        <button type="submit" class="btn btn-success pull-right" name="kl">Register</button>
+        <input type="submit" value="Register" class="btn btn-success pull-right" name="kl">
+        </form>
     </div>
-    </form>
+
 </div>
     </div>
     <div class="clearfix"></div>
@@ -173,7 +173,7 @@ if (isset($_POST['kl'])){
                     else{
                         alert('Wrong account Number');
                         $(this).css('border-color', 'red');
-                        $(this).focus();
+                        $('#jk').focus();
                     }
 
                     // location.reload();}
@@ -184,7 +184,28 @@ if (isset($_POST['kl'])){
             });
         });
     
-  
+  $('#bvn').change( function () {
+     var bvn = $(this).val();
+      $.ajax({
+          url: 'regext.php',
+          type: 'POST',
+          data: {bvn:bvn, c:c},
+          success: function (data){
+              if(data !== "") {
+                 alert('Correct')
+              }
+              else{
+                  alert('Wrong BVN, Supply the right one');
+                  $('#bvn').focus();
+              }
+
+              // location.reload();}
+          },
+          error: function (dat) {
+              window.alert('error');
+          }
+      });
+  });
     });
 
 </script>
