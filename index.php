@@ -37,11 +37,8 @@ if (isset($_POST['login'])){
         <li class="active"><a href="index.html">Home</a></li>
         <li><a class="drop" href="#">Pages</a>
           <ul>
-            <li><a href="pages/gallery.html">Gallery</a></li>
-            <li><a href="pages/full-width.html">Full Width</a></li>
-            <li><a href="pages/sidebar-left.html">Sidebar Left</a></li>
-            <li><a href="pages/sidebar-right.html">Sidebar Right</a></li>
-            <li><a href="pages/basic-grid.html">Basic Grid</a></li>
+            <li><a href="#">More</a></li>
+            <li><a href="#">Settings</a></li>
           </ul>
         </li>
       </ul>
@@ -103,11 +100,11 @@ if (isset($_POST['login'])){
             <input type="text" class="form-control" placeholder="Email" name="email">
           </div>
           <div class="form-group">
-            <input type="text" class="form-control" placeholder="Password" name="pass">
+            <input type="password" class="form-control" placeholder="Password" name="pass">
           </div>
             <footer>
                 <ul class="nospace inline pushright">
-                    <li><button type="submit" class="btn" name="login">Login</button></li>
+                    <li><button type="submit" class="btn btn-success" name="login">Login</button></li>
                     <li><a class="btn inverse" href="register.php">New here? Sign Up</a></li>
                 </ul>
             </footer>

@@ -37,7 +37,7 @@ if (isset($_POST['register'])){
 
 <html>
 <head>
-<title>Devenna</title>
+<title>E-track</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link href="../layout/styles/layout.css" rel="stylesheet" type="text/css" media="all">
@@ -168,16 +168,16 @@ Admin</li>
                                 </div>
                                 <div class="form-group">
 
-                                    <label>Username</label>
+                                    <label style="color: white">Username</label>
                                     <input type="text" value="" class="form-control input-lg" name="username">
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Password</label>
+                                    <label style="color: white">Password</label>
                                     <input type="password" value="" class="form-control input-lg" name="pass">
                                 </div>
                                 <div class="form-group">
-                                    <label>Re-enter Password</label>
+                                    <label style="color: white">Re-enter Password</label>
                                     <input type="password" value="" class="form-control input-lg" name="cpass">
                                 </div>
                                 <div class="row">

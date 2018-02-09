@@ -5,10 +5,11 @@
  * Date: 1/24/2018
  * Time: 4:46 AM
  */
-// if(!isset($_SESSION['username'])){
-//     header('location:index.php');
-// }
 session_start();
+ if(!isset($_SESSION['username'])){
+    header('location:index.php');
+ }
+
 require '../conn.php';
 if(isset($_POST['log'])){
     $acct = $_POST['acctNo'];
@@ -64,7 +65,7 @@ if (isset($_POST['send'])){
         <!-- ################################################################################################ -->
         <nav id="mainav" class="fl_left">
             <ul class="clear">
-                <li class="active"><a href="index.html">Home</a></li>
+                <li class="active"><a href="index.php">Home</a></li>
                 <li><a class="drop" href="#">Actions</a>
                     <ul>
                         <li><a href="logout.php">Logout</a></li>
